@@ -10,7 +10,7 @@ export default class PostServices{
             let posts: Array<Post> = [];
     
             allPosts.forEach((childSnapshot) => {
-              const childData = childSnapshot.val()
+              const childData: Post = childSnapshot.val()
               posts.push(childData)
             });
 
@@ -21,7 +21,7 @@ export default class PostServices{
         }    
     }
 
-    static async getPostByID(id: string){
+    static async getPostByID(id: string): Promise<any>{
         try {
             return await database.ref('posts/' + id).once('value');
         } catch (error) {
@@ -29,7 +29,7 @@ export default class PostServices{
         }
     }
 
-    static async addPost(payload: {title: string, content: string, published: boolean}){
+    static async addPost(payload: {title: string, content: string, published: boolean}): Promise<Post>{
         try {
             const postData: Post = {
                 id: uuidv1(),
@@ -43,7 +43,7 @@ export default class PostServices{
         }
     }
 
-    static async updatePost(postObj: Post) {
+    static async updatePost(postObj: Post): Promise<any>{
         try {
             return await database.ref('posts').child(postObj.id).update(postObj)
         } catch (error) {
