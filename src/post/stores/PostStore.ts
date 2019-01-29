@@ -10,6 +10,12 @@ export interface Post {
 
 export class PostStore {
   @observable posts :Array<Post> = [];
+  @observable post :Post = {
+    id: '',
+    title: '',
+    content: '',
+    published: false
+  };
 
   @computed
   get countPublishedPost(): number {
@@ -19,14 +25,40 @@ export class PostStore {
   @action
   fetchAllPublishedPosts() {
     PostServices.fetchAllPosts().then((response: Array<Post>) => {
-        this.posts = response
+      this.posts = response
     }).catch (error => error);
   }
 
   @action
   deletePostByID(id: string) {
-    PostServices.deletePostByID(id).then((response: Post) => {
-        this.posts = this.posts.filter(post => post.id !== id)
+    PostServices.deletePostByID(id).then(() => {
+      this.posts = this.posts.filter(post => post.id !== id);
+    }).catch((error: any) => error)
+  }
+
+  @action
+  addPost(payload: {title: string, content: string, published: boolean}) {
+    PostServices.addPost(payload).then((response: Post) => {
+      this.posts = [...this.posts, response];
+    }).catch((error: any) => error)
+  }
+
+  @action
+  updatePost(postObj: Post) {
+    PostServices.updatePost(postObj).then((response: Post) => {
+      this.posts.map(post => {
+        if (post.id === postObj.id) {
+          this.post = postObj
+        }
+        this.post = post
+      })
+    }).catch((error: any) => error)
+  }
+
+  @action
+  getPostByID(id: string) {
+    PostServices.getPostByID(id).then((response: Post) => {
+      this.post = response;
     }).catch((error: any) => error)
   }
 }
